@@ -57,7 +57,7 @@ const defaults = {
         method: 'GET',
         headers: '',
     },
-    defaultLimit: 50,
+    defaultLimit: 10,
     defaultOffset: 0,
     defaultTypes: reduceTypesToString(['coin', 'fiat', 'denominator']),
     requestParameters: '',
@@ -67,7 +67,7 @@ const defaults = {
 
     coins: [],
 
-    deepResultsDesired: true,
+    deepResultsDesired: false,
 
     currencies: [],
     defaultCurrency: {
@@ -102,13 +102,15 @@ const CoinRankSDK = ()=> {
     }
 
     const createQuery = async (dataType, query, options, sdk)=>{
-        const queryData = {
-            dataType,
-            query,
-            options: options ||  sdk.defaults.fetchOptions,
-            deepResultsDesired:  sdk.defaults.deepResultsDesired,
-        }
-        return await getByQuery(queryData, query, options)
+        try {
+            const queryData = {
+                dataType,
+                query,
+                options: options ||  sdk.defaults.fetchOptions,
+                deepResultsDesired: sdk.defaults.deepResultsDesired ?? false,
+            }
+            return await getByQuery(queryData, options)
+        } catch (err) {console.log(err)}
     }
 
     const coinRank = { 
@@ -121,6 +123,8 @@ const CoinRankSDK = ()=> {
         getMarketsByQuery: async function(query, options){return await this.createQuery('markets', query, options, this)},
 
         getExchangesByQuery: async function(query, options){return await this.createQuery('exchanges', query, options, this)},
+
+        getAllByQuery: async function(query, options){return await this.createQuery('all', query, options, this)},
 
         defaults,
     }
