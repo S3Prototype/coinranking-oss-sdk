@@ -1,0 +1,34 @@
+{
+  "name": "coinranking-oss-sdk",
+  "version": "1.0.0",
+  "description": "An unofficial SDK for the coinranking REST API.",
+  "main": "src/coinranking-oss-sdk-index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon demo_code/basic_demo.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/S3Prototype/coinranking-oss-sdk.git"
+  },
+  "keywords": [
+    "coinranking",
+    "sdk",
+    "cryptocurrency",
+    "crypto",
+    "bitcoin",
+    "doge"
+  ],
+  "author": "Shaquil Hansford (S3Prototype)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/S3Prototype/coinranking-oss-sdk/issues"
+  },
+  "homepage": "https://github.com/S3Prototype/coinranking-oss-sdk#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  }
+}
