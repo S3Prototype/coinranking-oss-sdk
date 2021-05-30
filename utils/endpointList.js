@@ -10,4 +10,6 @@ module.exports = {
     markets: 'https://api.coinranking.com/v2/markets ',
     dapps: 'https://api.coinranking.com/v2/dapps',
     nfts: 'https://api.coinranking.com/v2/nfts',
+
+    all: 'No specific endpoint exists for an "all" request',
 }

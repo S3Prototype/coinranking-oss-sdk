@@ -28,6 +28,9 @@ const initConfigs = (config, {defaults})=>{
         defaults.defaultLimit = config.params.limit || defaults.defaultLimit
         defaults.defaultOffset  = config.params.offset || defaults.defaultOffset
         
+        if(config.deepResultsDesired && typeof config.deepResultsDesired === 'boolean')
+            defaults.deepResultsDesired = config.deepResultsDesired
+
         if(config.params.types)
             defaults.defaultTypes = reduceTypesToString(config.params.types)
 
@@ -64,6 +67,8 @@ const defaults = {
 
     coins: [],
 
+    deepResultsDesired: true,
+
     currencies: [],
     defaultCurrency: {
       uuid: "yhjMzLPhuIDl",
@@ -83,6 +88,8 @@ const CoinRankSDK = ()=> {
 
             initConfigs(config, this)
 
+            console.log("Initted this", this)
+
             // const initOptions = {this.defaults.fetchOptions, sdk: this}
             // await initLists(initOptions)
             // console.log(this.coins.splice(0, 5))
@@ -94,17 +101,32 @@ const CoinRankSDK = ()=> {
         }
     }
 
-    const coinRank = {
+    const createQuery = async (dataType, query, options, sdk)=>{
+        const queryData = {
+            dataType,
+            query,
+            options: options ||  sdk.defaults.fetchOptions,
+            deepResultsDesired:  sdk.defaults.deepResultsDesired,
+        }
+        return await getByQuery(queryData, query, options)
+    }
+
+    const coinRank = { 
         init: initCoinRankSDK,
         
-        getCoinsByQuery: async(query, options)=>await getByQuery('coins', query, options),
+        createQuery,
 
-        getMarketsByQuery: async(query, options)=>await getByQuery('markets', query, options),
+        getCoinsByQuery: async function(query, options){return await this.createQuery('coins', query, options, this)},
+
+        getMarketsByQuery: async function(query, options){return await this.createQuery('markets', query, options, this)},
+
+        getExchangesByQuery: async function(query, options){return await this.createQuery('exchanges', query, options, this)},
 
         defaults,
     }
 
     coinRank.init = coinRank.init.bind(coinRank)
+    // coinRank.createQuery = coinRank.createQuery.bind(coinRank)
     coinRank.getCoinsByQuery = coinRank.getCoinsByQuery.bind(coinRank)
     coinRank.getMarketsByQuery = coinRank.getMarketsByQuery.bind(coinRank)
 

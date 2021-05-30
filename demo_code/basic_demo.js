@@ -7,6 +7,8 @@ const test = async()=>{
     console.log(await CoinRankSDK.getCoinsByQuery('bitco'))
     console.log("Markets results:")
     console.log(await CoinRankSDK.getMarketsByQuery('bitco'))
+    console.log("Exchanges results:")
+    console.log(await CoinRankSDK.getExchangesByQuery('bitco'))
     console.log('Got past init.')
 }
 
