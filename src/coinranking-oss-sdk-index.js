@@ -25,16 +25,18 @@ const initConfigs = (config, {defaults})=>{
         if(config.currency && config.currencySymbol !== defaults.defaultCurrency.symbol)
             defaults.defaultCurrency = defaults.findCurrency(config.currencySymbol)
 
-        defaults.defaultLimit = config.params.limit || defaults.defaultLimit
-        defaults.defaultOffset  = config.params.offset || defaults.defaultOffset
+        if(config.params){
+            defaults.defaultLimit = config.params.limit || defaults.defaultLimit
+            defaults.defaultOffset  = config.params.offset || defaults.defaultOffset
+            if(config.params.types)
+                defaults.defaultTypes = reduceTypesToString(config.params.types)
+        }
         
         if(config.showDeepResults && typeof config.showDeepResults === 'boolean')
             defaults.showDeepResults = config.showDeepResults
 
-        if(config.params.types)
-            defaults.defaultTypes = reduceTypesToString(config.params.types)
-
-        defaults.fetchOptions.headers = {'x-access-token': config.apiKey}
+        if(config.apiKey)
+            defaults.fetchOptions.headers = {'x-access-token': config.apiKey}
         
     }//if(config)
     
@@ -53,7 +55,6 @@ const initLists = async ({fetchOptions, sdk})=>{
 const defaults = {
     
     fetchOptions : {
-        method: 'GET',
         headers: '',
     },
     defaultLimit: 10,

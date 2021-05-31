@@ -1,6 +1,6 @@
 {
   "name": "coinranking-oss-sdk",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "An unofficial SDK for the coinranking REST API.",
   "main": "src/coinranking-oss-sdk-index.js",
   "scripts": {
