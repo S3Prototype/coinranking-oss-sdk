@@ -3,7 +3,12 @@ const CoinRankSDK = require('../src/coinranking-oss-sdk-index')
 
 const test = async()=>{
     await CoinRankSDK.init()
-    // console.log((await CoinRankSDK.getAllByQuery('bitco'))[0])
+    try{
+        // console.log()
+        console.log(await CoinRankSDK.getNFTs({limit:1}))
+    } catch (err) {
+        console.log(err)
+    }
     // console.log("Coins results:")
     // console.log(await CoinRankSDK.getCoinsByQuery('bitco'))
     // console.log("Markets results:")

@@ -35,7 +35,7 @@ const getDeepResultList = async({type, query, fetchResult, fetchOptions})=>{
             type,
             list: rawResultList.filter(result=>{
                 //Return only options that contain a property with a value that matches the query.
-                return Object.keys(result).some(key=>new String(result[key]).includes(query))
+                return Object.keys(result).some(key=>new RegExp(query).test(new String(result[key])))
             })
         }
     }
@@ -67,50 +67,67 @@ const getByQuery = async (queryData, fetchOptions)=>{
             fetchResult, fetchOptions
         })
     }
-
-        //Below code gets deeper results. The results returned by the search-suggestions
-        //endpoint are not as detailed as the results from using direct endpoints related
-        //to the type of data sought for.
-    const resultList = {}
-
-    // return Object.keys(endpointList).map(async(endpointKey)=>{ 
-
-    //     const deepResultList = await fetchList(endpointList[endpointKey], fetchOptions)
-    //         //Remove extraneous information
-    //     const rawResultList = deepResultList.data[endpointKey]   
-
-    //     const extendedList = ['dapps', 'nfts']
-    //     if(extendedList.includes(endpointKey)){
-    //         return rawResultList.filter(result=>{
-    //             //Return only options that contain a property with a value that matches the query.
-    //             return Object.keys(result).some(key=>(new RegExp(query)).test(result[key]))
-    //         })
-    //     }
-    // })
-
+        //Get results for 'all'
     return Promise.all(
-        // [
-            // ...Object.keys(fetchResult.data).map(async(resultType)=>{
-            //     return await getDeepResultList({
-            //         type: resultType, query: queryData.query,
-            //         fetchResult, fetchOptions
-            //     })
-            //     //Next add code that gets the results from the other endpoints. The above handles
-            //     //coins, markets and exchanges.
-            //     // return resultList[resultType]
-            // }),
-            Object.keys(endpointList).map(async(endpointKey)=>{
-                return await getDeepResultList({
-                    type: endpointKey, query: queryData.query,
-                    fetchResult, fetchOptions
-                })
+        Object.keys(endpointList).map(async(endpointKey)=>{
+            return await getDeepResultList({
+                type: endpointKey, query: queryData.query,
+                fetchResult, fetchOptions
             })
-        // ]
+        })
     )
+}
+
+const getByUuid = async(queryData, fetchOptions)=>{
+    const {type, uuid, queryParams} = queryData
+    
+    let paramValue = ''
+    const paramArray = Object.keys(queryParams)
+    if(paramArray.length > 0){
+        paramValue = paramArray.reduce((paramString, currParam, index, paramArray)=>{
+            let returnString = paramString + `${currParam}=${queryParams[currParam]}`
+            returnString += index < paramArray.length-1 ? '&' : ''
+            return returnString
+        }, '?')
+    }
+
+    console.log("paramValue:", paramValue)
+
+    const endPointString = `${endpointList[type]}/${uuid}${paramValue}`
+    const fetchResult = await fetchList(endPointString, fetchOptions)
+
+    if(fetchResult.status === 'fail' || fetchResult.status === 'error')
+        throw {name: fetchResult.type, message: fetchResult.message}
+
+    return fetchResult.data[type]
+}
+
+const getResource = async(queryData, fetchOptions)=>{
+    const {type, queryParams} = queryData
+    
+    let paramValue = ''
+    const paramArray = Object.keys(queryParams)
+    if(paramArray.length > 0){
+        paramValue = paramArray.reduce((paramString, currParam, index, paramArray)=>{
+            let returnString = paramString + `${currParam}=${queryParams[currParam]}`
+            returnString += index < paramArray.length-1 ? '&' : ''
+            return returnString
+        }, '?')
+    }
+
+    const endPointString = `${endpointList[type]}${paramValue}`
+    const fetchResult = await fetchList(endPointString, fetchOptions)
+
+    if(fetchResult.status === 'fail' || fetchResult.status === 'error')
+        throw {name: fetchResult.type, message: fetchResult.message}
+
+    return fetchResult.data[type]
 }
 
 const getMethods = {
     getByQuery,
+    getByUuid,
+    getResource,
 }
 
 module.exports = getMethods

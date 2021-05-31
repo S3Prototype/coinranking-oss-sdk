@@ -1,6 +1,6 @@
 const fetch = require('node-fetch')
 const fetchList = require('../utils/fetchList')
-const {getByQuery} = require('../utils/getMethods')
+const {getByQuery, getByUuid, getResource} = require('../utils/getMethods')
 const endpointList = require('../utils/endpointList')
 
 const reduceTypesToString = (types)=>{
@@ -113,26 +113,79 @@ const CoinRankSDK = ()=> {
         } catch (err) {console.log(err)}
     }
 
+    // const uuidQuery = async(dataType, uuid, queryParams, sdk)=>{
+
+    //     const queryData = {
+    //         dataType,
+    //         uuid,
+    //         fetchOptions: this.defaults.fetchOptions,
+    //         queryParams
+    //     }
+    // }
+
     const coinRank = { 
         init: initCoinRankSDK,
+            //Query-based getters
+        getCoinsByQuery: async function(query, options){return await createQuery('coins', query, options, this)},
+        getMarketsByQuery: async function(query, options){return await createQuery('markets', query, options, this)},
+        getExchangesByQuery: async function(query, options){return await createQuery('exchanges', query, options, this)},
+        getAllByQuery: async function(query, options){return await createQuery('all', query, options, this)},
         
-        createQuery,
+            //Uuid- and id-based getters
+        getCoinByUuid: async function(uuid, queryParams={}){
+            return await getByUuid({type:'coin', uuid, queryParams}, this.defaults.fetchOptions)
+        },
+        getExchangeByUuid: async function(uuid, queryParams={}){
+            return await getByUuid({type:'exchange', uuid, queryParams}, this.defaults.fetchOptions)
+        },
+        getMarketByUuid: async function(uuid, queryParams={}){
+            return await getByUuid({type:'market', uuid, queryParams}, this.defaults.fetchOptions)
+        },
+        getDapp: async function (dappName, queryParams={}){
+            return await getByUuid({type:'dapp', uuid:dappName, queryParams}, this.defaults.fetchOptions)
+        },
+        getNFT: async function (id, queryParams={}){
+            return await getByUuid({type:'nft', uuid:id, queryParams}, this.defaults.fetchOptions)
+        },
 
-        getCoinsByQuery: async function(query, options){return await this.createQuery('coins', query, options, this)},
-
-        getMarketsByQuery: async function(query, options){return await this.createQuery('markets', query, options, this)},
-
-        getExchangesByQuery: async function(query, options){return await this.createQuery('exchanges', query, options, this)},
-
-        getAllByQuery: async function(query, options){return await this.createQuery('all', query, options, this)},
+            //Default getters
+        getCoins: async function (queryParams={}){
+            return await getResource({type:'coins', queryParams}, this.defaults.fetchOptions)
+        },
+        getExchanges: async function (queryParams={}){
+            return await getResource({type:'exchanges', queryParams}, this.defaults.fetchOptions)
+        },
+        getMarkets: async function (queryParams={}){
+            return await getResource({type:'markets', queryParams}, this.defaults.fetchOptions)
+        },
+        getDapps: async function (queryParams={}){
+            return await getResource({type:'dapps', queryParams}, this.defaults.fetchOptions)
+        },
+        getNFTs: async function (queryParams={}){
+            return await getResource({type:'nfts', queryParams}, this.defaults.fetchOptions)
+        },
+        
 
         defaults,
     }
 
     coinRank.init = coinRank.init.bind(coinRank)
-    // coinRank.createQuery = coinRank.createQuery.bind(coinRank)
+
+    coinRank.getExchangesByQuery = coinRank.getExchangesByQuery.bind(coinRank)
     coinRank.getCoinsByQuery = coinRank.getCoinsByQuery.bind(coinRank)
     coinRank.getMarketsByQuery = coinRank.getMarketsByQuery.bind(coinRank)
+
+    coinRank.getCoinByUuid = coinRank.getCoinByUuid.bind(coinRank)
+    coinRank.getExchangeByUuid = coinRank.getExchangeByUuid.bind(coinRank)
+    coinRank.getMarketByUuid = coinRank.getMarketByUuid.bind(coinRank)
+    coinRank.getDapp = coinRank.getDapp.bind(coinRank)
+    coinRank.getNFT = coinRank.getNFT.bind(coinRank)
+
+    coinRank.getCoins = coinRank.getCoins.bind(coinRank)
+    coinRank.getExchanges = coinRank.getExchanges.bind(coinRank)
+    coinRank.getMarkets = coinRank.getMarkets.bind(coinRank)
+    coinRank.getDapps = coinRank.getDapps.bind(coinRank)
+    coinRank.getNFTs = coinRank.getNFTs.bind(coinRank)
 
     return coinRank
 }
