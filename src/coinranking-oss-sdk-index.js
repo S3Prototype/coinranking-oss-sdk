@@ -28,8 +28,8 @@ const initConfigs = (config, {defaults})=>{
         defaults.defaultLimit = config.params.limit || defaults.defaultLimit
         defaults.defaultOffset  = config.params.offset || defaults.defaultOffset
         
-        if(config.deepResultsDesired && typeof config.deepResultsDesired === 'boolean')
-            defaults.deepResultsDesired = config.deepResultsDesired
+        if(config.showDeepResults && typeof config.showDeepResults === 'boolean')
+            defaults.showDeepResults = config.showDeepResults
 
         if(config.params.types)
             defaults.defaultTypes = reduceTypesToString(config.params.types)
@@ -44,7 +44,6 @@ const initConfigs = (config, {defaults})=>{
 const initLists = async ({fetchOptions, sdk})=>{
     return Promise.all(Object.keys(sdk).map(async (listType)=>{
         if(endpointList[listType]){
-            console.log(listType)
             const listRequest = await fetchList(endpointList[listType], fetchOptions)
             sdk[listType] = listRequest.data[listType]
         }
@@ -67,7 +66,7 @@ const defaults = {
 
     coins: [],
 
-    deepResultsDesired: false,
+    showDeepResults: false,
 
     currencies: [],
     defaultCurrency: {
@@ -88,12 +87,6 @@ const CoinRankSDK = ()=> {
 
             initConfigs(config, this)
 
-            console.log("Initted this", this)
-
-            // const initOptions = {this.defaults.fetchOptions, sdk: this}
-            // await initLists(initOptions)
-            // console.log(this.coins.splice(0, 5))
-
         } catch (err) {
             //handle errors later
             console.log("Error trying to init sdk", err.message)
@@ -107,21 +100,11 @@ const CoinRankSDK = ()=> {
                 dataType,
                 query,
                 options: options ||  sdk.defaults.fetchOptions,
-                deepResultsDesired: sdk.defaults.deepResultsDesired ?? false,
+                showDeepResults: sdk.defaults.showDeepResults ?? false,
             }
             return await getByQuery(queryData, options)
         } catch (err) {console.log(err)}
     }
-
-    // const uuidQuery = async(dataType, uuid, queryParams, sdk)=>{
-
-    //     const queryData = {
-    //         dataType,
-    //         uuid,
-    //         fetchOptions: this.defaults.fetchOptions,
-    //         queryParams
-    //     }
-    // }
 
     const coinRank = { 
         init: initCoinRankSDK,

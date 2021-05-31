@@ -9,12 +9,6 @@ const test = async()=>{
     } catch (err) {
         console.log(err)
     }
-    // console.log("Coins results:")
-    // console.log(await CoinRankSDK.getCoinsByQuery('bitco'))
-    // console.log("Markets results:")
-    // console.log(await CoinRankSDK.getMarketsByQuery('bitco'))
-    // console.log("Exchanges results:")
-    // console.log(await CoinRankSDK.getExchangesByQuery('bitco'))
 }
 
 test()

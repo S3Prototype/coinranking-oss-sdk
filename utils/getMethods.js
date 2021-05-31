@@ -30,7 +30,6 @@ const getDeepResultList = async({type, query, fetchResult, fetchOptions})=>{
         'currencies', 'exchangesIndex',
     ]
     if(extendedList.includes(type)){
-        console.log(`${type} is part of extended list`)
         return {
             type,
             list: rawResultList.filter(result=>{
@@ -59,7 +58,7 @@ const getByQuery = async (queryData, fetchOptions)=>{
         //Get deep result for this data type if it's not "all"
     if(queryData.dataType !== 'all'){
         //if you shouldn't or can't get deep results, return what we have.
-        if(!queryData.deepResultsDesired || !verifyDeepResultsPossible)
+        if(!queryData.showDeepResults || !verifyDeepResultsPossible)
             return fetchResult.data[queryData.dataType]
 
         return getDeepResultList({
@@ -90,8 +89,6 @@ const getByUuid = async(queryData, fetchOptions)=>{
             return returnString
         }, '?')
     }
-
-    console.log("paramValue:", paramValue)
 
     const endPointString = `${endpointList[type]}/${uuid}${paramValue}`
     const fetchResult = await fetchList(endPointString, fetchOptions)
